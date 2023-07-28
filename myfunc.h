@@ -2,6 +2,7 @@
 #include <string>
 #include <stdio.h>
 #include "Now.h"
+#include <string.h>
 
 void ShowMenu()
 {
@@ -156,6 +157,7 @@ AGAIN:
 
 void BuyTicket()
 {
+    void SaveDeal(const struct MovieData *p, int BuyNumber);
     std::cout << "-- 请输入要购买电影的编号 --" << std::endl;
     int SearchMovie;
     std::cin >> SearchMovie;
@@ -238,7 +240,7 @@ void BuyTicket()
                     // std::cout << EnterInfo.number << ' ' << EnterInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
                     fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                     fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
-                    std::cout << "-- 购买成功 --" << std::endl;
+                    SaveDeal(&EnterInfo, BuyNumber);
                     fclose(fPtr);
                     std::cout << "-- 将自动返回主菜单 --" << std::endl;
                     Sleep(2000);
@@ -255,4 +257,39 @@ void BuyTicket()
     {
         std::cout << "--! 抱歉，未找到该电影 !--" << std::endl;
     }
+}
+
+struct DealData
+{
+    char name[10];
+    long long int display_date;
+    long long int display_time;
+    char room[10];
+    long long int deal_date;
+    long long int deal_time;
+    char dealtype[10];
+    double dealprice;
+};
+
+void SaveDeal(const struct MovieData *p, int BuyNumber)
+{
+    FILE *dfPtr;
+    struct DealData DealInfo = {"", 0, 0, "", 0, 0, "购票", 0};
+    if ((dfPtr = fopen("movie_deal.dat", "ab+")) == NULL)
+    {
+        std::cout << "--！交易录入出现错误，请检查文件是否正常 !--" << std::endl;
+        exit(0);
+    }
+    strcpy(DealInfo.name, p->name);
+    DealInfo.display_date = p->display_date;
+    DealInfo.display_time = p->display_time;
+    strcpy(DealInfo.room, p->room);
+    DealInfo.deal_date = DateNow();
+    DealInfo.deal_time = TimeNow();
+    DealInfo.dealprice = BuyNumber * p->fare;
+    std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
+    fseek(dfPtr, 0, SEEK_END);
+    fwrite(&DealInfo, sizeof(struct DealData), 1, dfPtr);
+    fclose(dfPtr);
+    std::cout << "-- 购买成功，交易信息录入成功 --" << std::endl;
 }
