@@ -142,6 +142,7 @@ AGAIN:
             }
             else
             {
+                fclose(fPtr); // 加上这个关闭文件，不然会出现这样的bug：按其他键返回主菜单后实际上信息没录进去。
                 break;
             }
         }
@@ -206,6 +207,7 @@ void BuyTicket()
                 if (TimeOut == 1)
                 {
                     std::cout << "--! 抱歉，该电影已经开始放映/放映结束了 !--" << std::endl;
+                    std::cout << "-- 将自动返回主菜单 --" << std::endl;
                     Sleep(2000);
                     break;
                 }
@@ -216,10 +218,10 @@ void BuyTicket()
                 AGAIN:
                     std::cout << "-- 请输入要购买的电影票数量 当前电影票剩余量：" << EnterInfo.remain << "张" << std::endl;
                     int BuyNumber = 0;
-                    if (!(std::cin >> BuyNumber) || BuyNumber > EnterInfo.remain)
+                    if (!(std::cin >> BuyNumber) || BuyNumber > EnterInfo.remain || BuyNumber <= 0)
                     {
                         std::string choice;
-                        std::cout << "--! 输入的不是数字或大于剩余票量 !--" << std::endl;
+                        std::cout << "--! 输入的不是数字/大于剩余票量/小于等于0 !--" << std::endl;
                         std::cout << "-- 是否重新录入? (按y以确定,按其他键返回主菜单) --" << std::endl;
                         std::cin.clear();
                         std::cin.sync();
