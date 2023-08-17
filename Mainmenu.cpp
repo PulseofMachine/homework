@@ -18,6 +18,7 @@ int main()
             break;
         case 3:
             std::cout << "-- 进入退票管理 --" << std::endl;
+            Refund();
             break;
         case 4:
             std::cout << "-- 开始修改电影放映信息 --" << std::endl;
