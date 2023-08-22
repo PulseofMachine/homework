@@ -22,6 +22,7 @@ int main()
             break;
         case 4:
             std::cout << "-- 开始修改电影放映信息 --" << std::endl;
+            ChangeMovieInfo();
             break;
         case 5:
             std::cout << "-- 开始信息输出 --" << std::endl;
