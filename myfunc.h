@@ -50,7 +50,7 @@ struct MovieData
     int number;
     char name[10];
     char type[10];
-    char duration[10];
+    int duration;
     long long int display_date;
     long long int display_time;
     char room[10];
@@ -61,7 +61,7 @@ struct MovieData
 void EnterMovieInfo()
 {
     FILE *fPtr;
-    struct MovieData EnterInfo = {0, "", "", "", 0, 0, "", 0, 0};
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
     if ((fPtr = fopen("movie_base.dat", "ab+")) == NULL)
     {
         std::cout << "--！文件打开出现错误，请检查文件是否正常 !--" << std::endl;
@@ -163,7 +163,7 @@ void BuyTicket()
     int SearchMovie;
     std::cin >> SearchMovie;
     FILE *fPtr;
-    struct MovieData EnterInfo = {0, "", "", "", 0, 0, "", 0, 0};
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
     if ((fPtr = fopen("movie_base.dat", "rb+")) == NULL)
     {
         std::cout << "--！文件打开出现错误，请检查文件是否正常 !--" << std::endl;
@@ -463,7 +463,7 @@ void ChangeInfo(int MovieNumber, int RefundNumber)
 {
 
     FILE *fPtr;
-    struct MovieData EnterInfo = {0, "", "", "", 0, 0, "", 0, 0};
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
     if ((fPtr = fopen("movie_base.dat", "rb+")) == NULL)
     {
         std::cout << "--！文件打开出现错误，请检查文件是否正常 !--" << std::endl;
@@ -490,6 +490,7 @@ void ChangeInfo(int MovieNumber, int RefundNumber)
 void ChangeMovieInfo()
 {
     void ModifyInfo();
+    void DeleteInfo();
     while (1)
     {
         std::cout << "-- 请选择要执行的操作(输入对应数字,输入其他视为返回主菜单) --" << std::endl;
@@ -500,8 +501,10 @@ void ChangeMovieInfo()
         {
         case 1:
             ModifyInfo();
-        // case 2:
-        //     DeleteInfo();
+            break;
+        case 2:
+            DeleteInfo();
+            break;
         default:
             break;
         }
@@ -518,7 +521,7 @@ void ModifyInfo()
 {
     int CheckBuy(int number);
     FILE *fPtr;
-    struct MovieData EnterInfo = {0, "", "", "", 0, 0, "", 0, 0};
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
     if ((fPtr = fopen("movie_base.dat", "rb+")) == NULL)
     {
         std::cout << "--！文件打开出现错误，请检查文件是否正常 !--" << std::endl;
@@ -618,8 +621,8 @@ AGAIN:
                         goto CHANGE;
                     case 3:
                         std::cout << "-- 正在修改电影时长，请输入 --" << std::endl;
-                        char NewDuration[10];
-                        //  std::cin >> NewDuration;
+                        int NewDuration;
+                        std::cin >> NewDuration;
                         if (!(std::cin >> NewDuration))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -627,7 +630,7 @@ AGAIN:
                             std::cin.sync();
                             goto CHANGE;
                         }
-                        strcpy(EnterInfo.duration, NewDuration);
+                        EnterInfo.duration = NewDuration;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
@@ -745,8 +748,8 @@ AGAIN:
                     {
                     case 1:
                         std::cout << "-- 正在修改电影时长，请输入 --" << std::endl;
-                        char NewDuration[10];
-                        //  std::cin >> NewDuration;
+                        int NewDuration;
+                        std::cin >> NewDuration;
                         if (!(std::cin >> NewDuration))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -754,7 +757,7 @@ AGAIN:
                             std::cin.sync();
                             goto CHANGE2;
                         }
-                        strcpy(EnterInfo.duration, NewDuration);
+                        EnterInfo.duration = NewDuration;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
@@ -808,25 +811,152 @@ int CheckBuy(int number)
 {
     FILE *CfPtr;
     struct DealData CheckInfo = {0, "", 0, 0, "", 0, 0, "购票", 0, 0};
-    if ((CfPtr = fopen("movie_deal.dat", "ab+")) == NULL)
+    if ((CfPtr = fopen("movie_deal.dat", "rb+")) == NULL)
     {
         std::cout << "--！交易信息文件出现错误，请检查文件是否正常 !--" << std::endl;
         exit(0);
     }
+    rewind(CfPtr);
     while ((fread(&CheckInfo, sizeof(struct DealData), 1, CfPtr)) != (int)NULL)
     {
-        std::cout << "sn is " << number << std::endl;
-        std::cout << "EI is " << CheckInfo.number << std::endl;
+        //     std::cout << "sn is " << number << std::endl;
+        //   std::cout << "EI is " << CheckInfo.number << std::endl;
         // std::cout << RefundInfo.number << ' ' <<  RefundInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
 
         if (number == CheckInfo.number)
         {
+            fclose(CfPtr);
             return 0;
         }
     }
+    fclose(CfPtr);
     return 1;
 }
 
 void DeleteInfo()
 {
+    int CheckBuy(int number);
+    int CheckDate(int number);
+    FILE *fPtr;
+    FILE *nfPtr;
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
+AGAIN:
+    // 请输入要录入的电影放映信息，顺序为[放映编号] [电影名称] [电影类型] [时长] [放映日期] [放映时间] [放映影厅] [票价] [余票]
+    while (1)
+    {
+
+        int MovieNumber;
+        std::cout << "-- 请先输入要删除的电影的编号 --" << std::endl;
+        if (!(std::cin >> MovieNumber))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是放映编号 !--" << std::endl;
+            std::cout << "-- 是否重新录入? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+        // std::cout << "buy is" << CheckBuy(MovieNumber) << std::endl;
+        // std::cout << "date is" << CheckDate(MovieNumber) << std::endl;
+        if (CheckBuy(MovieNumber) == 1 && CheckDate(MovieNumber) == 1)
+        {
+            rename("movie_base.dat", "temp.dat");
+            if ((fPtr = fopen("temp.dat", "rb")) == NULL)
+            {
+                std::cout << "--! 文件打开出现错误 !--" << std::endl;
+                exit(0);
+            }
+            if ((nfPtr = fopen("movie_base.dat", "wb")) == NULL)
+            {
+                std::cout << "--! 文件打开出现错误 !--" << std::endl;
+                exit(0);
+            }
+            int Deleted = 0;
+            char name[10];
+            while ((fread(&EnterInfo, sizeof(struct MovieData), 1, fPtr)) != (int)NULL)
+            {
+                std::cout << "nu is " << MovieNumber << std::endl;
+                std::cout << "EI is " << EnterInfo.number << std::endl;
+                if (MovieNumber == EnterInfo.number)
+                {
+                    Deleted = 1;
+                    strcpy(name, EnterInfo.name);
+                }
+                else
+                {
+                    fwrite(&EnterInfo, sizeof(struct MovieData), 1, nfPtr);
+                }
+            }
+            if (Deleted == 1)
+            {
+                std::cout << "-- 电影\"" << name << "\"已成功删除 --" << std::endl;
+                std::cout << "-- 将自动返回主菜单 --" << std::endl;
+                Sleep(3000);
+                break;
+            }
+            else
+            {
+                std::cout << "--! 该电影不存在 !--" << std::endl;
+                std::cout << "-- 将自动返回主菜单 --" << std::endl;
+                Sleep(3000);
+                break;
+            }
+        }
+        else
+        {
+            std::cout << "--! 抱歉，该电影未放映完毕或有购票记录，无法删除 !--" << std::endl;
+            std::string choice;
+            std::cout << "-- 是否重新输入要删除的电影? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+}
+
+int CheckDate(int number)
+{
+    FILE *fPtr;
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
+    if ((fPtr = fopen("movie_base.dat", "rb+")) == NULL)
+    {
+        std::cout << "--！文件打开出现错误，请检查文件是否正常 !--" << std::endl;
+        exit(0);
+    }
+    rewind(fPtr);
+    while ((fread(&EnterInfo, sizeof(struct MovieData), 1, fPtr)) != (int)NULL)
+    {
+        // std::cout << "nu is " << number << std::endl;
+        // std::cout << "EI is " << EnterInfo.number << std::endl;
+        if (EnterInfo.number == number)
+        {
+            int Time = TimeNow();
+            int Date = DateNow();
+            std::cout << "date is" << EnterInfo.display_date << std::endl;
+            std::cout << "datenow is" << Date << std::endl;
+            if (Date > EnterInfo.display_date || (Date == EnterInfo.display_date && Time > EnterInfo.display_time))
+            {
+                fclose(fPtr);
+                return 1;
+            }
+        }
+    }
+    fclose(fPtr);
+    return 0;
 }
