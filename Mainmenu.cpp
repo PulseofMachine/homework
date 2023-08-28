@@ -30,6 +30,7 @@ int main()
             break;
         case 6:
             std::cout << "-- 进入查询管理 --" << std::endl;
+            Inquire();
             break;
         case 7:
             std::cout << "-- 进入统计管理 --" << std::endl;
