@@ -5,6 +5,60 @@
 #include <string.h>
 #include <iomanip>
 
+void Login()
+{
+    std::cout << "                 ___________________________________________" << std::endl;
+    std::cout << "                 |                                         |" << std::endl;
+    std::cout << "                 |          欢迎使用电影购票系统           |" << std::endl;
+    std::cout << "                 |   在使用之前您需要输入账号密码进行登录  |" << std::endl;
+    std::cout << "                 |                                         |" << std::endl;
+    std::cout << "                 |_________________________________________|" << std::endl;
+    std::cout << std ::endl;
+AGAIN:
+    std::cout << "-- 请输入账号 --" << std::endl;
+    char EName[64];
+    std::cin >> EName;
+    std::cout << "-- 请输入密码 --" << std::endl;
+    char EPassword[64];
+    std::cin >> EPassword;
+    strcat(EName, "\n"); // fgets会吸收\n
+    FILE *fPtr;
+    if ((fPtr = fopen("Account.txt", "r")) == NULL)
+    {
+        std::cout << "--! 账号存储文件出现错误 !--" << std::endl;
+        exit(0);
+    }
+    char Name[64];
+    char Password[64];
+    fgets(Name, 64, fPtr);
+    fgets(Password, 64, fPtr);
+    fclose(fPtr);
+    // std::cout << "Name is" << Name << std::endl;
+    // std::cout << "Password is" << Password << std::endl;
+    // std::cout << "EName is" << EName << std::endl;
+    // std::cout << "EPassword is" << EPassword << std::endl;
+    if (strcmp(EName, Name) == 0 && strcmp(EPassword, Password) == 0)
+    {
+        std::cout << "-- 登录成功 --" << std::endl;
+    }
+    else
+    {
+        std::cout << "--! 输入的账号或密码有误 !--" << std::endl;
+        std::cout << "-- 是否重新输入（输入“y”重新输入，输入其他退出程序） --" << std::endl;
+        std::string choice;
+        std::cin >> choice;
+        if (choice == "y")
+        {
+            goto AGAIN;
+        }
+        else
+        {
+            std::cout << "-- 系统已退出 --" << std::endl;
+            exit(0);
+        }
+    }
+}
+
 void ShowMenu()
 {
     std::cout << "                 ___________________________________________" << std::endl;
@@ -21,7 +75,7 @@ void ShowMenu()
     std::cout << "                 |      -7   统计管理                      |" << std::endl;
     std::cout << "                 |      -8   汇总报表                      |" << std::endl;
     std::cout << "                 |      -9   修改密码                      |" << std::endl;
-    std::cout << "                 |      -0  退出系统                       |" << std::endl;
+    std::cout << "                 |      -0   退出系统                      |" << std::endl;
     std::cout << "                 |                                         |" << std::endl;
     std::cout << "                 |_________________________________________|" << std::endl;
     std::cout << std ::endl;
@@ -904,6 +958,7 @@ AGAIN:
             if (Deleted == 1)
             {
                 std::cout << "-- 电影\"" << name << "\"已成功删除 --" << std::endl;
+                remove("temp.dat");
                 std::cout << "-- 将自动返回主菜单 --" << std::endl;
                 Sleep(3000);
                 break;
@@ -1925,4 +1980,48 @@ AGAIN:
         }
         break;
     }
+}
+
+void ChangePassword()
+{
+    char line[100];
+    int linecount = 1;
+    std::cout << "-- 请输入新的账号 --" << std::endl;
+    char NName[64];
+    std::cin >> NName;
+    std::cout << "-- 请输入新的密码 --" << std::endl;
+    char Npassword[64];
+    std::cin >> Npassword;
+    strcat(NName, "\n");
+    FILE *fPtr, *nfPtr;
+    rename("Account.txt", "Temp.txt");
+    if ((fPtr = fopen("Temp.txt", "r+")) == NULL)
+    {
+        std::cout << "--! 文件打开出现错误 !--" << std::endl;
+        exit(0);
+    }
+    if ((nfPtr = fopen("Account.txt", "w+")) == NULL)
+    {
+        std::cout << "--! 文件打开出现错误 !--" << std::endl;
+        exit(0);
+    }
+    while (fgets(line, sizeof(line), fPtr))
+    {
+        if (linecount == 1)
+        {
+            fprintf(nfPtr, NName);
+        }
+        if (linecount == 2)
+        {
+            fprintf(nfPtr, Npassword);
+        }
+        linecount++;
+    }
+    fclose(fPtr);
+    fclose(nfPtr);
+    remove("Temp.txt");
+}
+
+void Report()
+{
 }

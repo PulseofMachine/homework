@@ -3,6 +3,7 @@
 
 int main()
 {
+    Login();
     int Chioce;
     while ((Chioce = GetChoice()) != 0)
     {
@@ -41,6 +42,7 @@ int main()
             break;
         case 9:
             std::cout << "-- 开始密码修改 --" << std::endl;
+            ChangePassword();
             break;
         }
     }
