@@ -1235,7 +1235,7 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
         break;
     case 2:
@@ -1295,7 +1295,7 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
         break;
     case 3:
@@ -1356,7 +1356,7 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
         break;
     case 4:
@@ -1416,7 +1416,7 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
         break;
     }
@@ -1513,7 +1513,7 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
         break;
     case 2:
@@ -1575,7 +1575,354 @@ AGAIN:
         }
         if (Found == 0)
         {
-            std::cout << " -- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
         }
+    }
+}
+
+void Statistic()
+{
+    // 电影放映信息基本信息：可以按照电影名称、放映日期、放映影厅等条件进行余票统计，统计满足条件对应的余票。
+    // 交易信息：可以按照电影名称、交易日期等条件，统计出满足条件对应的购票人数、购票金额、退票人数、退票金额等。
+    // void InquireMovie();
+    // void InquireDeal();
+    void CountRemain();
+    void CountDeal();
+    std::cout << "-- 请输入您要的信息（输入其他视为返回主页面） --" << std::endl;
+    std::cout << "-1 电影放映信息余票统计 -2 电影交易信息" << std::endl;
+    int choice;
+    std::cin >> choice;
+    switch (choice)
+    {
+    case 1:
+        CountRemain();
+        break;
+    case 2:
+        CountDeal();
+        break;
+    default:
+        break;
+    }
+    Holdon();
+}
+
+void CountRemain()
+{
+    struct LinkData *CreatMovieBaseList();
+
+    struct LinkData *p;
+
+    p = CreatMovieBaseList();
+
+AGAIN:
+    std::cout << "-- 请选择您要输入的统计信息，我会统计出满足所有条件的电影的余票和（输入其他视为返回主页面） --" << std::endl;
+    std::cout << "-1 电影名称  -2 放映日期 -3 放映影厅 " << std::endl;
+    int choice;
+    std::cin >> choice;
+    int Found = 0;
+    int total = 0;
+    switch (choice)
+    {
+    case 1:
+        std::cout << "-- 请输入要查询的电影名称 --" << std::endl;
+        char SearchName[10];
+        if (!(std::cin >> SearchName))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是电影名称 !--" << std::endl;
+            std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (p != NULL)
+        {
+            if (strcmp(p->name, SearchName) == 0)
+            {
+                if (Found == 0)
+                {
+                    std::cout << "-- 以下是符合条件的电影的余票 --" << std::endl;
+                    std::cout << "_________________________" << std::endl;
+                }
+                Found = 1;
+                std::cout.setf(std::ios::left);
+                std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
+                          << "|" << std::endl;
+                total += p->remain;
+            }
+            p = p->next;
+        }
+        if (Found == 1)
+        {
+            std::cout << "|_______________________|" << std::endl;
+            std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
+        }
+        if (Found == 0)
+        {
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+        }
+        break;
+
+    case 2:
+        std::cout << "-- 请输入要查询的电影放映日期 --" << std::endl;
+        int SearchDate;
+        if (!(std::cin >> SearchDate))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是放映日期 !--" << std::endl;
+            std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (p != NULL)
+        {
+            if (p->display_date == SearchDate)
+            {
+
+                if (Found == 0)
+                {
+                    std::cout << "-- 以下是符合条件的电影的余票 --" << std::endl;
+                    std::cout << "_________________________" << std::endl;
+                }
+                Found = 1;
+                std::cout.setf(std::ios::left);
+                std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
+                          << "|" << std::endl;
+                total += p->remain;
+
+                p = p->next;
+            }
+            if (Found == 1)
+            {
+                std::cout << "|_______________________|" << std::endl;
+                std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
+            }
+            if (Found == 0)
+            {
+                std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            }
+            break;
+        case 3:
+            std::cout << "-- 请输入要查询的电影放映影厅 --" << std::endl;
+            char Searchroom[10];
+            if (!(std::cin >> Searchroom))
+            {
+                std::string choice;
+                std::cout << "--! 输入的不是电影放映影厅 !--" << std::endl;
+                std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+                std::cin.clear();
+                std::cin.sync();
+                std::cin >> choice;
+                if (choice == "y")
+                {
+                    goto AGAIN;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            while (p != NULL)
+            {
+                if (strcmp(p->room, Searchroom) == 0)
+                {
+                    if (Found == 0)
+                    {
+                        std::cout << "-- 以下是符合条件的电影的余票 --" << std::endl;
+                        std::cout << "_________________________" << std::endl;
+                    }
+                    Found = 1;
+                    std::cout.setf(std::ios::left);
+                    std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
+                              << "|" << std::endl;
+                    total += p->remain;
+                }
+                p = p->next;
+            }
+            if (Found == 1)
+            {
+                std::cout << "|_______________________|" << std::endl;
+                std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
+            }
+            if (Found == 0)
+            {
+                std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+            }
+            break;
+        }
+    }
+}
+
+void CountDeal()
+{
+    struct LinkDealData *CreatMovieDealList();
+    struct LinkDealData *q;
+    q = CreatMovieDealList();
+    // 电影名称、交易日期
+AGAIN:
+    std::cout << "-- 请选择您要输入的统计信息，我会统计出满足所有条件的电影的余票和（输入其他视为返回主页面） --" << std::endl;
+    std::cout << "-1 电影名称  -2 交易日期 " << std::endl;
+    int choice;
+    std::cin >> choice;
+    int Found = 0;
+    int BuyP = 0;
+    int BuyF = 0;
+    int RefP = 0;
+    int RefF = 0;
+    switch (choice)
+    {
+        // struct DealData
+        //  {
+        //      int number;
+        //      char name[10];
+        //      long long int display_date;
+        //      long long int display_time;
+        //      char room[10];
+        //      long long int deal_date;
+        //      long long int deal_time;
+        //      char dealtype[10];
+        //      double dealprice;
+        //      int dealnumber;
+        //      // 电影编号、电影名称、放映日期、放映时间、放映影厅、交易日期、交易时间、交易类型、交易金额、交易数量。
+        //  };
+        //  统计出满足条件对应的购票人数、购票金额、退票人数、退票金额等。
+    case 1:
+        std::cout << "-- 请输入要查询的电影名称 --" << std::endl;
+        char SearchName[10];
+        if (!(std::cin >> SearchName))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是电影名称 !--" << std::endl;
+            std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (q != NULL)
+        {
+            if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "购票") == 0)
+            {
+                Found = 1;
+                BuyP += q->dealnumber;
+                BuyF += q->dealprice;
+            }
+            if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "退票") == 0)
+            {
+                Found = 1;
+                RefP += q->dealnumber;
+                RefF += q->dealprice;
+            }
+            q = q->next;
+        }
+        if (Found == 1)
+        {
+            std::cout << "-- 以下是符合条件的电影的相关交易信息 --" << std::endl;
+            std::cout.setf(std::ios::left);
+            std::cout << " ________________________________" << std::endl;
+            std::cout << " |         电影信息             |" << std::endl;
+            std::cout << " |                              |" << std::endl;
+            std::cout << " | "
+                      << " 购票人数: " << std::setw(18) << BuyP << "|" << std::endl;
+            std::cout << " | "
+                      << " 购票金额: " << std::setw(18) << BuyF << "|" << std::endl;
+            std::cout << " | "
+                      << " 退票人数: " << std::setw(18) << RefP * -1 << "|" << std::endl;
+            std::cout << " | "
+                      << " 退票金额: " << std::setw(18) << RefF << "|" << std::endl;
+            std::cout << " |______________________________|" << std::endl;
+        }
+        if (Found == 0)
+        {
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+        }
+        break;
+
+    case 2:
+        std::cout << "-- 请输入要查询的电影交易日期 --" << std::endl;
+        int SearchDate;
+        if (!(std::cin >> SearchDate))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是交易日期 !--" << std::endl;
+            std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+        while (q != NULL)
+        {
+            if (q->deal_date == SearchDate)
+            {
+                if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "购票") == 0)
+                {
+                    Found = 1;
+                    BuyP += q->dealnumber;
+                    BuyF += q->dealprice;
+                }
+                if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "退票") == 0)
+                {
+                    Found = 1;
+                    RefP += q->dealnumber;
+                    RefF += q->dealprice;
+                }
+            }
+            q = q->next;
+        }
+        if (Found == 1)
+        {
+            std::cout << "-- 以下是符合条件的电影的相关交易信息 --" << std::endl;
+            std::cout.setf(std::ios::left);
+            std::cout << " ________________________________" << std::endl;
+            std::cout << " |         电影信息             |" << std::endl;
+            std::cout << " |                              |" << std::endl;
+            std::cout << " | "
+                      << " 购票人数: " << std::setw(18) << BuyP << "|" << std::endl;
+            std::cout << " | "
+                      << " 购票金额: " << std::setw(18) << BuyF << "|" << std::endl;
+            std::cout << " | "
+                      << " 退票人数: " << std::setw(18) << RefP * -1 << "|" << std::endl;
+            std::cout << " | "
+                      << " 退票金额: " << std::setw(18) << RefF << "|" << std::endl;
+            std::cout << " |______________________________|" << std::endl;
+        }
+        if (Found == 0)
+        {
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+        }
+        break;
     }
 }

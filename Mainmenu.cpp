@@ -34,6 +34,7 @@ int main()
             break;
         case 7:
             std::cout << "-- 进入统计管理 --" << std::endl;
+            Statistic();
             break;
         case 8:
             std::cout << "-- 正在输出报表 --" << std::endl;
