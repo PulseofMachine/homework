@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "Now.h"
 #include <string.h>
+#include <iomanip>
 
 void ShowMenu()
 {
@@ -959,4 +960,175 @@ int CheckDate(int number)
     }
     fclose(fPtr);
     return 0;
+}
+
+struct LinkData
+{
+    int number;
+    char name[10];
+    char type[10];
+    int duration;
+    long long int display_date;
+    long long int display_time;
+    char room[10];
+    int fare;
+    int remain;
+    struct LinkData *next;
+};
+struct LinkDealData
+{
+    int number;
+    char name[10];
+    long long int display_date;
+    long long int display_time;
+    char room[10];
+    long long int deal_date;
+    long long int deal_time;
+    char dealtype[10];
+    double dealprice;
+    int dealnumber;
+    struct LinkDealData *next;
+    // 电影编号、电影名称、放映日期、放映时间、放映影厅、交易日期、交易时间、交易类型、交易金额、交易数量。
+};
+
+void ShowAllInfo()
+{
+    struct LinkData *CreatMovieBaseList();
+    struct LinkDealData *CreatMovieDealList();
+    struct LinkData *p;
+    struct LinkDealData *q;
+    p = CreatMovieBaseList();
+    q = CreatMovieDealList();
+    while (p != NULL)
+    {
+        std::cout.setf(std::ios::left);
+        std::cout << " ________________________________" << std::endl;
+        std::cout << " |         电影信息             |" << std::endl;
+        std::cout << " |                              |" << std::endl;
+        std::cout << " | "
+                  << " 电影放映编号:  " << std::setw(13) << p->number << "|" << std::endl;
+        std::cout << " | "
+                  << " 电影名:  " << std::setw(19) << p->name << "|" << std::endl;
+        std::cout << " | "
+                  << " 电影类型: " << std::setw(18) << p->type << "|" << std::endl;
+        std::cout << " | "
+                  << " 电影时长: " << std::setw(18) << p->duration << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映日期: " << std::setw(18) << p->display_date << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映时间: " << std::setw(18) << p->display_time << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映厅: " << std::setw(20) << p->room << "|" << std::endl;
+        std::cout << " | "
+                  << " 票价: " << std::setw(22) << p->fare << "|" << std::endl;
+        std::cout << " | "
+                  << " 余票: " << std::setw(22) << p->remain << "|" << std::endl;
+        std::cout << " |______________________________|" << std::endl;
+        p = p->next;
+    }
+    // 电影编号、电影名称、放映日期、放映时间、放映影厅、交易日期、交易时间、交易类型、交易金额、交易数量。
+    while (q != NULL)
+    {
+        std::cout.setf(std::ios::left);
+        std::cout << " ________________________________" << std::endl;
+        std::cout << " |         交易信息             |" << std::endl;
+        std::cout << " |                              |" << std::endl;
+        std::cout << " | "
+                  << " 电影放映编号:  " << std::setw(13) << q->number << "|" << std::endl;
+        std::cout << " | "
+                  << " 电影名:  " << std::setw(19) << q->name << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映日期: " << std::setw(18) << q->display_date << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映时间: " << std::setw(18) << q->display_time << "|" << std::endl;
+        std::cout << " | "
+                  << " 放映厅: " << std::setw(20) << q->room << "|" << std::endl;
+        std::cout << " | "
+                  << " 交易日期: " << std::setw(18) << q->deal_date << "|" << std::endl;
+        std::cout << " | "
+                  << " 交易时间: " << std::setw(18) << q->deal_time << "|" << std::endl;
+        std::cout << " | "
+                  << " 交易类型: " << std::setw(20) << q->dealtype << "|" << std::endl;
+        std::cout << " | "
+                  << " 交易金额: " << std::setw(18) << q->dealprice << "|" << std::endl;
+        std::cout << " | "
+                  << " 交易数量: " << std::setw(18) << q->dealnumber << "|" << std::endl;
+        std::cout << " |______________________________|" << std::endl;
+        q = q->next;
+    }
+}
+
+struct LinkData *CreatMovieBaseList()
+{
+    FILE *ptr;
+    struct MovieData EnterInfo = {0, "", "", 0, 0, 0, "", 0, 0};
+    struct LinkData *head, *p, *q;
+    if ((ptr = fopen("movie_base.dat", "rb")) == NULL)
+    {
+        std::cout << "--! 文件打开出现错误 !--" << std::endl;
+        exit(0);
+    }
+    head = NULL;
+    while (fread(&EnterInfo, sizeof(MovieData), 1, ptr) != 0)
+    {
+        p = (struct LinkData *)malloc(sizeof(struct LinkData));
+        p->number = EnterInfo.number;
+        strcpy(p->name, EnterInfo.name);
+        strcpy(p->type, EnterInfo.type);
+        p->duration = EnterInfo.duration;
+        p->display_date = EnterInfo.display_date;
+        p->display_time = EnterInfo.display_time;
+        strcpy(p->room, EnterInfo.room);
+        p->fare = EnterInfo.fare;
+        p->remain = EnterInfo.remain;
+        p->next = NULL;
+        if (head == NULL)
+        {
+            head = p;
+        }
+        else
+        {
+            q->next = p;
+        }
+        q = p;
+    }
+    fclose(ptr);
+    return head;
+}
+
+struct LinkDealData *CreatMovieDealList()
+{
+    FILE *ptr;
+    struct DealData DealInfo = {0, "", 0, 0, "", 0, 0, "", 0, 0};
+    struct LinkDealData *head, *p, *q;
+    if ((ptr = fopen("movie_deal.dat", "rb")) == NULL)
+    {
+        std::cout << "--! 文件打开出现错误 !--" << std::endl;
+        exit(0);
+    }
+    head = NULL;
+    while (fread(&DealInfo, sizeof(DealData), 1, ptr) != 0)
+    {
+        p = (struct LinkDealData *)malloc(sizeof(struct LinkDealData));
+        p->number = DealInfo.number;
+        strcpy(p->name, DealInfo.name);
+        p->display_date = DealInfo.display_date;
+        p->display_time = DealInfo.display_time;
+        strcpy(p->room, DealInfo.room);
+        strcpy(p->dealtype, DealInfo.dealtype);
+        p->dealprice = DealInfo.dealprice;
+        p->dealnumber = DealInfo.dealnumber;
+        p->next = NULL;
+        if (head == NULL)
+        {
+            head = p;
+        }
+        else
+        {
+            q->next = p;
+        }
+        q = p;
+    }
+    fclose(ptr);
+    return head;
 }

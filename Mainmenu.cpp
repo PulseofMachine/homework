@@ -26,6 +26,7 @@ int main()
             break;
         case 5:
             std::cout << "-- 开始信息输出 --" << std::endl;
+            ShowAllInfo();
             break;
         case 6:
             std::cout << "-- 进入查询管理 --" << std::endl;
