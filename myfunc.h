@@ -359,7 +359,7 @@ void SaveDeal(const struct MovieData *p, int BuyNumber)
     DealInfo.deal_time = TimeNow();
     DealInfo.dealprice = BuyNumber * p->fare;
     DealInfo.dealnumber = BuyNumber;
-    std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
+    // std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
     fseek(dfPtr, 0, SEEK_END);
     fwrite(&DealInfo, sizeof(struct DealData), 1, dfPtr);
     fclose(dfPtr);
@@ -406,9 +406,9 @@ AGAIN:
         rewind(fPtr);
         while ((fread(&RefundInfo, sizeof(struct DealData), 1, fPtr)) != (int)NULL)
         {
-            std::cout << "sn is " << SearchMovie << std::endl;
-            std::cout << "EI is " << RefundInfo.number << std::endl;
-            // std::cout << RefundInfo.number << ' ' <<  RefundInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
+            // std::cout << "sn is " << SearchMovie << std::endl;
+            // std::cout << "EI is " << RefundInfo.number << std::endl;
+            //  std::cout << RefundInfo.number << ' ' <<  RefundInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
 
             if (SearchMovie == RefundInfo.number)
             {
@@ -515,7 +515,7 @@ void SaveRefund(const struct DealData *p, int RefundNumber)
     DealInfo.deal_time = TimeNow();
     DealInfo.dealprice = RefundNumber * (p->dealprice / p->dealnumber) * -1;
     DealInfo.dealnumber = RefundNumber;
-    std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
+    // std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
     fseek(rfPtr, 0, SEEK_END);
     fwrite(&DealInfo, sizeof(struct DealData), 1, rfPtr);
     fclose(rfPtr);
@@ -547,7 +547,7 @@ void ChangeInfo(int MovieNumber, int RefundNumber)
         }
         Round++;
     }
-    std::cout << EnterInfo.number << ' ' << EnterInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
+    // std::cout << EnterInfo.number << ' ' << EnterInfo.name << ' ' << EnterInfo.type << ' ' << EnterInfo.duration << ' ' << EnterInfo.display_date << ' ' << EnterInfo.display_time << ' ' << EnterInfo.room << ' ' << EnterInfo.fare << ' ' << EnterInfo.remain << std::endl;
 }
 
 void ChangeMovieInfo()
@@ -2176,8 +2176,8 @@ void MonthDeal()
             List[i].refund = (q->dealprice) * -1;
             List[i].buy = 0;
         }
-        std::cout << "start is " << List[i].start << std::endl;
-        std::cout << "end is " << List[i].end << std::endl;
+        //     std::cout << "start is " << List[i].start << std::endl;
+        //     std::cout << "end is " << List[i].end << std::endl;
         q = q->next;
         i++;
     }
