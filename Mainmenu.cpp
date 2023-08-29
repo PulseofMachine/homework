@@ -39,6 +39,7 @@ int main()
             break;
         case 8:
             std::cout << "-- 正在输出报表 --" << std::endl;
+            Report();
             break;
         case 9:
             std::cout << "-- 开始密码修改 --" << std::endl;

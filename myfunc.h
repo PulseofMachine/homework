@@ -4,6 +4,8 @@
 #include "Now.h"
 #include <string.h>
 #include <iomanip>
+#include <windows.h>
+#include <vector>
 
 void Login()
 {
@@ -511,8 +513,8 @@ void SaveRefund(const struct DealData *p, int RefundNumber)
     strcpy(DealInfo.room, p->room);
     DealInfo.deal_date = DateNow();
     DealInfo.deal_time = TimeNow();
-    DealInfo.dealprice = RefundNumber * p->dealnumber * -1;
-    DealInfo.dealnumber = -1 * RefundNumber;
+    DealInfo.dealprice = RefundNumber * (p->dealprice / p->dealnumber) * -1;
+    DealInfo.dealnumber = RefundNumber;
     std::cout << DealInfo.name << ' ' << DealInfo.display_date << ' ' << DealInfo.display_time << ' ' << DealInfo.room << ' ' << DealInfo.deal_date << ' ' << DealInfo.deal_time << ' ' << DealInfo.dealtype << ' ' << DealInfo.dealprice << std::endl;
     fseek(rfPtr, 0, SEEK_END);
     fwrite(&DealInfo, sizeof(struct DealData), 1, rfPtr);
@@ -1156,7 +1158,21 @@ struct LinkData *CreatMovieBaseList()
     fclose(ptr);
     return head;
 }
-
+// struct LinkDealData
+// {
+//     int number;
+//     char name[10];
+//     long long int display_date;
+//     long long int display_time;
+//     char room[10];
+//     long long int deal_date;
+//     long long int deal_time;
+//     char dealtype[10];
+//     double dealprice;
+//     int dealnumber;
+//     struct LinkDealData *next;
+//     // 电影编号、电影名称、放映日期、放映时间、放映影厅、交易日期、交易时间、交易类型、交易金额、交易数量。
+// };
 struct LinkDealData *CreatMovieDealList()
 {
     FILE *ptr;
@@ -1176,6 +1192,8 @@ struct LinkDealData *CreatMovieDealList()
         p->display_date = DealInfo.display_date;
         p->display_time = DealInfo.display_time;
         strcpy(p->room, DealInfo.room);
+        p->deal_date = DealInfo.deal_date;
+        p->deal_time = DealInfo.deal_time;
         strcpy(p->dealtype, DealInfo.dealtype);
         p->dealprice = DealInfo.dealprice;
         p->dealnumber = DealInfo.dealnumber;
@@ -2022,6 +2040,239 @@ void ChangePassword()
     remove("Temp.txt");
 }
 
+struct RemainReport
+{
+    char name[10];
+    int remain;
+};
+
 void Report()
 {
+    void MonthDeal();
+    void ReportRemain();
+    std::cout << "-- 请输入您要汇总的类型（输入其他将返回主页面） --" << std::endl;
+    std::cout << "-1 电影的余票量汇总报表 -2 按月统计不同电影交易金额 " << std::endl;
+    int choice;
+    std::cin >> choice;
+    switch (choice)
+    {
+    case 1:
+        ReportRemain();
+        break;
+    case 2:
+        MonthDeal();
+        break;
+    default:
+        break;
+    }
+    Holdon();
+}
+void ReportRemain()
+{
+    struct LinkData *CreatMovieBaseList();
+    struct LinkData *p;
+    p = CreatMovieBaseList();
+    struct RemainReport list[1000];
+    int i = 0;
+    while (p != NULL)
+    {
+        strcpy(list[i].name, p->name);
+        list[i].remain = p->remain;
+        p = p->next;
+        i++;
+    }
+
+    FILE *file;
+    char filename[] = "汇总报表Template.tex";
+    char tempFilename[] = "电影的余票量汇总报表.tex";
+    char line[100];
+    int lineNum = 1;
+    int k = 0;
+
+    // 打开原始文件
+    file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        std::cout << "--! 生成报表出现错误 !--" << std::endl;
+        exit(0);
+    }
+
+    // 创建临时文件
+    FILE *tempFile = fopen(tempFilename, "w");
+    if (tempFile == NULL)
+    {
+        std::cout << "--! 生成报表出现错误 !--" << std::endl;
+        fclose(file);
+        exit(0);
+    }
+
+    // 逐行读取原始文件内容并写入临时文件
+    while (fgets(line, sizeof(line), file))
+    {
+
+        // 在第一行和第二行之间插入"你好"两个字
+        if (lineNum == 15)
+        {
+            fprintf(tempFile, "%s\\hline\n\\kaiti%s%s&\\kaiti%d\\\\\n", line, " ", list[k].name, list[k].remain);
+            k++;
+            while (k != i)
+            {
+                fprintf(tempFile, "\\hline\n\\kaiti%s%s&\\kaiti%d\\\\\n", " ", list[k].name, list[k].remain);
+                k++;
+            }
+        }
+        else
+        {
+            fprintf(tempFile, "%s", line);
+        }
+        lineNum++;
+    }
+
+    // 关闭文件
+    fclose(file);
+    fclose(tempFile);
+    // WinExec("CreateTex.bat", SW_HIDE);
+    system("xelatex 电影的余票量汇总报表.tex");
+    system("del *.log");
+    system("del *.aux");
+    system("start 电影的余票量汇总报表.pdf");
+}
+struct PrintMonth
+{
+    char name[10];
+    int start;
+    int end;
+    int mid;
+    int buy;
+    int refund;
+};
+void MonthDeal()
+{
+    struct LinkDealData *CreatMovieDealList();
+    struct LinkDealData *q;
+    struct PrintMonth List[100];
+    int i = 0;
+    q = CreatMovieDealList();
+    while (q != NULL)
+    {
+        strcpy(List[i].name, q->name);
+        List[i].mid = q->deal_date;
+        List[i].start = ((q->deal_date) / 100) * 100 + 1;
+        if (((List[i].start / 100) + 1) % 10 == 3)
+        {
+            List[i].end = ((List[i].start / 10000) + 1) * 10000 + 101;
+        }
+        else
+        {
+            List[i].end = List[i].start + 100;
+        }
+        if (strcmp(q->dealtype, "购票") == 0)
+        {
+            List[i].buy = q->dealprice;
+            List[i].refund = 0;
+        }
+        else if (strcmp(q->dealtype, "退票") == 0)
+        {
+            List[i].refund = (q->dealprice) * -1;
+            List[i].buy = 0;
+        }
+        std::cout << "start is " << List[i].start << std::endl;
+        std::cout << "end is " << List[i].end << std::endl;
+        q = q->next;
+        i++;
+    }
+    struct PrintMonth sort[100];
+    strcpy(sort[0].name, List[0].name);
+    sort[0].start = List[0].start;
+    sort[0].end = List[0].end;
+    sort[0].buy = List[0].buy;
+    sort[0].refund = List[0].refund;
+    int k = 1;
+    for (int j = 1; j < i; j++)
+    {
+        int h = 0;
+        while (h < k)
+        {
+            int flag = 0;
+            if (((strcmp(sort[h].name, List[j].name)) == 0) && (sort[h].start == List[j].start))
+            {
+                sort[h].refund += List[j].refund;
+                sort[h].buy += List[j].buy;
+                flag = 1;
+            }
+            if (h == k - 1 && flag == 0)
+            {
+                strcpy(sort[k].name, List[j].name);
+                sort[k].start = List[j].start;
+                sort[k].end = List[j].end;
+                sort[k].buy = List[j].buy;
+                sort[k].refund = List[j].refund;
+                k++;
+                break;
+            }
+            h++;
+        }
+    }
+    // for (int l = 0; l < k; l++)
+    // {
+    //     std::cout << sort[l].name << std::endl;
+    //     std::cout << sort[l].start << std::endl;
+    //     std::cout << sort[l].end << std::endl;
+    //     std::cout << sort[l].buy << std::endl;
+    //     std::cout << sort[l].refund << std::endl;
+    // }
+    FILE *file;
+    char filename[] = "汇总报表Template2.tex";
+    char tempFilename[] = "电影交易信息.tex";
+    char line[200];
+    int lineNum = 1;
+    int l = 0;
+
+    // 打开原始文件
+    file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        std::cout << "--! 生成报表出现错误 !--" << std::endl;
+        exit(0);
+    }
+
+    // 创建临时文件
+    FILE *tempFile = fopen(tempFilename, "w");
+    if (tempFile == NULL)
+    {
+        std::cout << "--! 生成报表出现错误 !--" << std::endl;
+        fclose(file);
+        exit(0);
+    }
+
+    // 逐行读取原始文件内容并写入临时文件
+    while (fgets(line, sizeof(line), file))
+    {
+
+        // 在第一行和第二行之间插入"你好"两个字
+        if (lineNum == 16)
+        {
+            fprintf(tempFile, "%s\n\\hline\n\\kaiti%s%s&\\kaiti%s%d&\\kaiti%s%d&\\kaiti%s%d&\\kaiti%s%d\\\\\n", line, " ", sort[l].name, " ", sort[l].start, " ", sort[l].end, " ", sort[l].buy, " ", sort[l].refund);
+            l++;
+            while (l != k)
+            {
+                fprintf(tempFile, "\\hline\n\\kaiti%s%s&\\kaiti%s%d&\\kaiti%s%d&\\kaiti%s%d&\\kaiti%s%d\\\\\n", " ", sort[l].name, " ", sort[l].start, " ", sort[l].end, " ", sort[l].buy, " ", sort[l].refund);
+                l++;
+            }
+        }
+        else
+        {
+            fprintf(tempFile, "%s", line);
+        }
+        lineNum++;
+    }
+
+    // 关闭文件
+    fclose(file);
+    fclose(tempFile);
+    // WinExec("CreateTex.bat", SW_HIDE);
+    system("xelatex 电影交易信息.tex");
+    system("del *.log");
+    system("del *.aux");
+    system("start 电影交易信息.pdf");
 }
