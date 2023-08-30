@@ -5,7 +5,6 @@
 #include <string.h>
 #include <iomanip>
 #include <windows.h>
-#include <vector>
 
 void Login()
 {
@@ -379,7 +378,7 @@ AGAIN:
         {
             std::string choice;
             std::cout << "--! 输入的不是电影编号 !--" << std::endl;
-            std::cout << "-- 是否重新录入? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cout << "-- 是否重新输入? (按y以确定,按其他键返回主菜单) --" << std::endl;
             std::cin.clear();
             std::cin.sync();
             std::cin >> choice;
@@ -481,7 +480,7 @@ AGAIN:
         {
             std::string choice;
             std::cout << "--! 抱歉，未找到该电影 !--" << std::endl;
-            std::cout << "-- 是否重新录入? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cout << "-- 是否重新输入? (按y以确定,按其他键返回主菜单) --" << std::endl;
             std::cin.clear();
             std::cin.sync();
             std::cin >> choice;
@@ -634,8 +633,13 @@ AGAIN:
                     std::cout << "-- 请输入相应的数字以进行更改（输入其他内容可以返回主菜单） --" << std::endl;
                     //[放映编号] [电影名称] [电影类型] [时长] [放映日期] [放映时间] [放映影厅] [票价] [余票]
                     std::cout << "-- -1 电影名称 -2 电影类型 -3 时长 -4 放映日期 -5 放映时间 -6 放映影厅 -7 票价 -8 余票 --" << std::endl;
-                    int ChangePart;
+                    int ChangePart = 999;
                     std::cin >> ChangePart;
+                    if (!std::cin >> ChangePart)
+                    {
+                        goto END;
+                    }
+
                     // struct MovieData
                     // {
                     //     int number;
@@ -664,6 +668,7 @@ AGAIN:
                         strcpy(EnterInfo.name, Newname);
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 2:
@@ -680,12 +685,13 @@ AGAIN:
                         strcpy(EnterInfo.type, NewType);
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 3:
                         std::cout << "-- 正在修改电影时长，请输入 --" << std::endl;
                         int NewDuration;
-                        std::cin >> NewDuration;
+                        // std::cin >> NewDuration;
                         if (!(std::cin >> NewDuration))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -696,12 +702,13 @@ AGAIN:
                         EnterInfo.duration = NewDuration;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 4:
                         std::cout << "-- 正在修改放映日期，请输入 --" << std::endl;
                         long long int NewDate;
-                        std::cin >> NewDate;
+                        //  std::cin >> NewDate;
                         if (!(std::cin >> NewDate))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -712,12 +719,13 @@ AGAIN:
                         EnterInfo.display_date = NewDate;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 5:
                         std::cout << "-- 正在修改放映时间，请输入 --" << std::endl;
                         long long int NewTime;
-                        std::cin >> NewTime;
+                        // std::cin >> NewTime;
                         if (!(std::cin >> NewTime))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -728,6 +736,7 @@ AGAIN:
                         EnterInfo.display_time = NewTime;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 6:
@@ -745,11 +754,12 @@ AGAIN:
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
+                        fclose(fPtr);
                         goto CHANGE;
                     case 7:
                         std::cout << "-- 正在修改票价，请输入 --" << std::endl;
                         int NewFare;
-                        std::cin >> NewFare;
+                        //   std::cin >> NewFare;
                         if (!(std::cin >> NewFare))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -760,12 +770,13 @@ AGAIN:
                         EnterInfo.fare = NewFare;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     case 8:
                         std::cout << "-- 正在修改余票量，请输入 --" << std::endl;
                         int NewRemain;
-                        std::cin >> NewRemain;
+                        //   std::cin >> NewRemain;
                         if (!(std::cin >> NewRemain))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -776,6 +787,7 @@ AGAIN:
                         EnterInfo.remain = NewRemain;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE;
                     default:
@@ -812,7 +824,6 @@ AGAIN:
                     case 1:
                         std::cout << "-- 正在修改电影时长，请输入 --" << std::endl;
                         int NewDuration;
-                        std::cin >> NewDuration;
                         if (!(std::cin >> NewDuration))
                         {
                             std::cout << "--! 输入的不是正确的修改参数! 将自动返回修改选择页。!--" << std::endl;
@@ -823,6 +834,7 @@ AGAIN:
                         EnterInfo.duration = NewDuration;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE2;
                     case 2:
@@ -839,6 +851,7 @@ AGAIN:
                         strcpy(EnterInfo.room, NewRoom);
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE2;
                     case 3:
@@ -855,6 +868,7 @@ AGAIN:
                         EnterInfo.remain = NewRemain;
                         fseek(fPtr, Round * sizeof(struct MovieData), SEEK_SET);
                         fwrite(&EnterInfo, sizeof(struct MovieData), 1, fPtr);
+                        fclose(fPtr);
                         std::cout << "-- 已完成更改 将返回修改选择页 --" << std::endl;
                         goto CHANGE2;
                     default:
@@ -863,7 +877,14 @@ AGAIN:
                     Round++;
                 }
             }
+            else
+            {
+                std::cout << "--! 未找到该电影 !--" << std::endl;
+                Holdon();
+                break;
+            }
         }
+    END:
         fclose(fPtr);
         break;
     }
@@ -945,8 +966,8 @@ AGAIN:
             char name[10];
             while ((fread(&EnterInfo, sizeof(struct MovieData), 1, fPtr)) != (int)NULL)
             {
-                std::cout << "nu is " << MovieNumber << std::endl;
-                std::cout << "EI is " << EnterInfo.number << std::endl;
+                //   std::cout << "nu is " << MovieNumber << std::endl;
+                // std::cout << "EI is " << EnterInfo.number << std::endl;
                 if (MovieNumber == EnterInfo.number)
                 {
                     Deleted = 1;
@@ -960,6 +981,8 @@ AGAIN:
             if (Deleted == 1)
             {
                 std::cout << "-- 电影\"" << name << "\"已成功删除 --" << std::endl;
+                fclose(fPtr);
+                fclose(nfPtr);
                 remove("temp.dat");
                 std::cout << "-- 将自动返回主菜单 --" << std::endl;
                 Sleep(3000);
@@ -975,7 +998,7 @@ AGAIN:
         }
         else
         {
-            std::cout << "--! 抱歉，该电影未放映完毕或有购票记录，无法删除 !--" << std::endl;
+            std::cout << "--! 抱歉，该电影未放映完毕或有购票记录或不存在，无法删除 !--" << std::endl;
             std::string choice;
             std::cout << "-- 是否重新输入要删除的电影? (按y以确定,按其他键返回主菜单) --" << std::endl;
             std::cin.clear();
@@ -1011,8 +1034,8 @@ int CheckDate(int number)
         {
             int Time = TimeNow();
             int Date = DateNow();
-            std::cout << "date is" << EnterInfo.display_date << std::endl;
-            std::cout << "datenow is" << Date << std::endl;
+            // std::cout << "date is" << EnterInfo.display_date << std::endl;
+            // std::cout << "datenow is" << Date << std::endl;
             if (Date > EnterInfo.display_date || (Date == EnterInfo.display_date && Time > EnterInfo.display_time))
             {
                 fclose(fPtr);
@@ -1779,68 +1802,70 @@ AGAIN:
                 std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
                           << "|" << std::endl;
                 total += p->remain;
-
-                p = p->next;
             }
-            if (Found == 1)
-            {
-                std::cout << "|_______________________|" << std::endl;
-                std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
-            }
-            if (Found == 0)
-            {
-                std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
-            }
-            break;
-        case 3:
-            std::cout << "-- 请输入要查询的电影放映影厅 --" << std::endl;
-            char Searchroom[10];
-            if (!(std::cin >> Searchroom))
-            {
-                std::string choice;
-                std::cout << "--! 输入的不是电影放映影厅 !--" << std::endl;
-                std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
-                std::cin.clear();
-                std::cin.sync();
-                std::cin >> choice;
-                if (choice == "y")
-                {
-                    goto AGAIN;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            while (p != NULL)
-            {
-                if (strcmp(p->room, Searchroom) == 0)
-                {
-                    if (Found == 0)
-                    {
-                        std::cout << "-- 以下是符合条件的电影的余票 --" << std::endl;
-                        std::cout << "_________________________" << std::endl;
-                    }
-                    Found = 1;
-                    std::cout.setf(std::ios::left);
-                    std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
-                              << "|" << std::endl;
-                    total += p->remain;
-                }
-                p = p->next;
-            }
-            if (Found == 1)
-            {
-                std::cout << "|_______________________|" << std::endl;
-                std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
-            }
-            if (Found == 0)
-            {
-                std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
-            }
-            break;
+            p = p->next;
         }
+        if (Found == 1)
+        {
+            std::cout << "|_______________________|" << std::endl;
+            std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
+        }
+
+        if (Found == 0)
+        {
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+        }
+        break;
+    case 3:
+        std::cout << "-- 请输入要查询的电影放映影厅 --" << std::endl;
+        char Searchroom[10];
+        if (!(std::cin >> Searchroom))
+        {
+            std::string choice;
+            std::cout << "--! 输入的不是电影放映影厅 !--" << std::endl;
+            std::cout << "-- 是否返回查询信息主页面? (按y以确定,按其他键返回主菜单) --" << std::endl;
+            std::cin.clear();
+            std::cin.sync();
+            std::cin >> choice;
+            if (choice == "y")
+            {
+                goto AGAIN;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        while (p != NULL)
+        {
+            if (strcmp(p->room, Searchroom) == 0)
+            {
+                if (Found == 0)
+                {
+                    std::cout << "-- 以下是符合条件的电影的余票 --" << std::endl;
+                    std::cout << "_________________________" << std::endl;
+                }
+                Found = 1;
+                std::cout.setf(std::ios::left);
+                std::cout << "|" << std::setw(8) << p->name << "余票：" << std::setw(7) << p->remain << "张"
+                          << "|" << std::endl;
+                total += p->remain;
+            }
+            p = p->next;
+        }
+        if (Found == 1)
+        {
+            std::cout << "|_______________________|" << std::endl;
+            std::cout << "满足条件的电影的余票总和为：" << total << "张" << std::endl;
+        }
+        if (Found == 0)
+        {
+            std::cout << "-- 很抱歉没有找到符合要求的电影 o(TヘTo) --" << std::endl;
+        }
+        break;
+    default:
+        break;
     }
 }
 
@@ -1937,7 +1962,7 @@ AGAIN:
         break;
 
     case 2:
-        std::cout << "-- 请输入要查询的电影交易日期 --" << std::endl;
+        std::cout << "-- 请输入要统计的电影交易日期 --" << std::endl;
         int SearchDate;
         if (!(std::cin >> SearchDate))
         {
@@ -1958,21 +1983,20 @@ AGAIN:
         }
         while (q != NULL)
         {
-            if (q->deal_date == SearchDate)
+
+            if ((q->deal_date == SearchDate) && strcmp(q->dealtype, "购票") == 0)
             {
-                if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "购票") == 0)
-                {
-                    Found = 1;
-                    BuyP += q->dealnumber;
-                    BuyF += q->dealprice;
-                }
-                if (strcmp(q->name, SearchName) == 0 && strcmp(q->dealtype, "退票") == 0)
-                {
-                    Found = 1;
-                    RefP += q->dealnumber;
-                    RefF += q->dealprice;
-                }
+                Found = 1;
+                BuyP += q->dealnumber;
+                BuyF += q->dealprice;
             }
+            if ((q->deal_date == SearchDate) && strcmp(q->dealtype, "退票") == 0)
+            {
+                Found = 1;
+                RefP += q->dealnumber;
+                RefF += q->dealprice;
+            }
+
             q = q->next;
         }
         if (Found == 1)
