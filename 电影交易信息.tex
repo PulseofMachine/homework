@@ -1,0 +1,32 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[font=large, labelfont=bf]{caption}
+\usepackage{graphicx}
+\setCJKfamilyfont{kaiti}{KaiTi}
+\newcommand{\kaiti}{\CJKfamily{kaiti}}
+\DeclareCaptionFont{kaiti}{\kaiti}
+\begin{document}
+\begin{center}
+    \begin{table}
+        \renewcommand\arraystretch{2}
+        \small
+        \resizebox{\textwidth}{!}
+        {
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                \kaiti 电影名称 & \kaiti 开始日期 & \kaiti 终止日期 & \kaiti 购票金额 & \kaiti 退票金额 \\
+
+\hline
+\kaiti Ironman&\kaiti 20230801&\kaiti 20230901&\kaiti 4000&\kaiti 2000\\
+\hline
+\kaiti Frozen&\kaiti 20230801&\kaiti 20230901&\kaiti 1000&\kaiti 10\\
+\hline
+\kaiti Ironman&\kaiti 20230801&\kaiti 20230901&\kaiti 0&\kaiti 2000\\
+                \hline
+            \end{tabular}
+        }
+
+        \captionsetup{labelformat=empty, font={kaiti, large}, labelfont={kaiti, bf}} % 修改此行
+        \caption*{电影交易信息}
+    \end{table}
+\end{center}
+\end{document}

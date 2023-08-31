@@ -1,0 +1,33 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[font=large, labelfont=bf]{caption}
+\setCJKfamilyfont{kaiti}{KaiTi}
+\newcommand{\kaiti}{\CJKfamily{kaiti}}
+\DeclareCaptionFont{kaiti}{\kaiti}
+\begin{document}
+\begin{center}
+    \begin{table}
+        \renewcommand\arraystretch{2}
+        \LARGE
+        \setlength{\tabcolsep}{20mm}
+        {
+            \begin{tabular}{|c|c|}
+                \hline
+                \kaiti 电影名称 & \kaiti 余票量 \\
+\hline
+\kaiti Thama&\kaiti100\\
+\hline
+\kaiti Frozen&\kaiti101\\
+\hline
+\kaiti Ironman&\kaiti450\\
+\hline
+\kaiti yourname&\kaiti200\\
+                \hline
+            \end{tabular}
+        }
+        \captionsetup{labelformat=empty, font={kaiti, large}, labelfont={kaiti, bf}} % 修改此行
+        \caption*{电影的余票量汇总报表}
+    \end{table}
+\end{center}
+\end{document}
+
+
